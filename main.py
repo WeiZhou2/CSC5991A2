@@ -1,4 +1,5 @@
-from flask import Flask
+import numbers
+from flask import Flask, request, jsonify
 import requests
 import random
 app = Flask(__name__)
@@ -43,18 +44,50 @@ jokes = [
     {
         "joke": "Q: \"What time is it when people are throwing pieces of bread at your head?\" A: Time to duck.",
         "author": "Online"
+    },
+    {
+        "joke":"Q: Why is Santa good at karate? A: He has a black belt.",
+        "author": "Online"
+    },
+    {
+        "joke":"Q: Where do werewolves buy Christmas gifts? A: Beast Buy.",
+        "author": "Online"
+    },
+    {
+        "joke":"Q: Why did the turkey join a band? A: So he could use his drumsticks.",
+        "author": "Online"
     }
 ]
 
 @app.route('/joke/', methods=['GET'])
-def local_jokes():
+def local_joke():
     randomNumber = random.randint(0, len(jokes)-1);
     return jokes[randomNumber]
 
+@app.route('/jokes', methods=['GET'])
+def local_jokes():
+    args = request.args
+    num = int(args.get('num'))
+    numArray = random.sample(range(len(jokes)-1), num)
+    returnArray = []
+    for x in numArray:
+        returnArray.append(jokes[x])
+    return jsonify(returnArray)
+
 @app.route('/online-joke/', methods=['GET'])
-def online_jokes():
+def online_joke():
     response = requests.get('https://v2.jokeapi.dev/joke/Any')
     return response.json()
+
+@app.route('/online-jokes', methods=['GET'])
+def online_jokes():
+    args = request.args
+    num = int(args.get('num'))
+    numArray = random.sample(range(1000), num)
+    returnArray = []
+    for x in numArray:
+        returnArray.append(requests.get('https://v2.jokeapi.dev/joke/Any').json())
+    return jsonify(returnArray)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
