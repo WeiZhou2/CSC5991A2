@@ -66,10 +66,11 @@ def local_joke():
 
 @app.route('/jokes', methods=['GET'])
 def local_jokes():
-    args = request.args    
-    if args.get('num').isnumeric() == False:
-        return []
-    num = int(args.get('num'))
+    args = request.args
+    opt_param = args.get('num')
+    if opt_param is None or opt_param.isnumeric() == False:
+        return jsonify([])
+    num = int(opt_param)
     numArray = random.sample(range(len(jokes)-1), num)
     returnArray = []
     for x in numArray:
@@ -84,9 +85,10 @@ def online_joke():
 @app.route('/online-jokes', methods=['GET'])
 def online_jokes():
     args = request.args
-    if args.get('num').isnumeric() == False:
-        return []
-    num = int(args.get('num'))
+    opt_param = args.get('num')
+    if opt_param is None or opt_param.isnumeric() == False:
+        return jsonify([])
+    num = int(opt_param)
     numArray = random.sample(range(1000), num)
     returnArray = []
     for x in numArray:
